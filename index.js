@@ -21,3 +21,18 @@ winston.info(`Loading Config File: ./config/env/${global.config.NODE_ENV}`);
 const config = require(`./config/env/${global.config.NODE_ENV}`);
 global.config = {...global.config, ...config};
 winston.info(`Configuration Loaded.`);
+/* ---------------------------- Global Constants ---------------------------- */
+global.constants = require('./config/constants');
+winston.info(`Loaded Constants`);
+/* ----------------------------- Connect MongoDB ---------------------------- */
+winston.info(`Connecting MongoDB`);
+require('./config/mongo')(async function(err) {
+  if(err) {
+    winston.error("Error in Establishing MongoDB Connection or Loading Mongoose Models/Schemas");
+    winston.error(err);
+    return;
+  }
+  winston.info("Mongo Connection Established and Loaded All Models");
+
+
+});
