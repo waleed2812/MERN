@@ -1,0 +1,29 @@
+{
+  "name": "mern",
+  "version": "1.0.0",
+  "description": "This is the code where I try new things in while developing applications using MERN Stack.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waleedbutt98/MERN.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/waleedbutt98/MERN/issues"
+  },
+  "homepage": "https://github.com/waleedbutt98/MERN#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "fs": "^0.0.1-security",
+    "glob": "^8.0.1",
+    "nodemon": "^2.0.16",
+    "path": "^0.12.7",
+    "winston": "^3.7.2"
+  }
+}
