@@ -17,7 +17,7 @@ module.exports = async function (cb) {
 
       // when successfully connected
       mongoose.connection.on("connected", function () {
-        winston.info("mongoose connection open to host loading all models");
+        winston.info("mongoose connection open to host loading all models/schemas");
         // Enabling mongoose debug mode if required
         mongoose.set("debug", global.config.mongodb.enableMongoDebugging);
         // load all models
@@ -25,7 +25,7 @@ module.exports = async function (cb) {
         glob.sync(modelRegEx).forEach(function (file) {
           const filePath = path.join(__dirname, "../", file);
           require(filePath);
-          winston.info(filePath + " is loaded");
+          winston.debug(filePath + " is loaded");
         });
         return cb(null);
       });
