@@ -7,8 +7,8 @@ function onError(error) {
 
   const bind =
     typeof port === "string"
-      ? "Pipe " + global.config.PORT
-      : "Port " + global.config.PORT;
+      ? "Pipe: " + global.config.PORT
+      : "Port: " + global.config.PORT;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -28,7 +28,7 @@ function onError(error) {
 function onListening() {
   const addr = global.server.address();
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  winston.info("Server is listening on" + bind);
+  winston.info("Server is listening on " + bind);
 }
 
 module.exports = {

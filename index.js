@@ -84,6 +84,33 @@ require("./config/mongo")(async function (err) {
       },
     })
   );
+  /* -------------------------------- Sessions -------------------------------- */
+  const session = require('express-session');
+  const mongoStore = require("connect-mongo");
+  app.use(
+    session({
+      secret: global.config.session.secret,
+      store: mongoStore.create({
+        mongoUrl: config.mongodb.host,
+        touchAfter: 60 * 60 * 24, // time period in seconds,
+        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+        collectionName: "tbl_sessions",
+      }),
+      resave: true,
+      saveUninitialized: true,
+      clearExpired: true,
+      checkExpirationInterval: 900000,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24, // time period in milliseconds,
+        sameSite: 'strict'
+      },
+    })
+  );
+
+  /* ------------------------------- Passport --------------------------------- */
+  const passport = require("./config/passport");
+  app.use(passport.initialize());
+  app.use(passport.session());
   /* ------------------------------- Web Routes ------------------------------- */
   const routesRegEx = "app/*/*.routes.js";
   winston.info("Web Routes are loading...");

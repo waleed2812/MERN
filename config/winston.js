@@ -7,7 +7,7 @@ const options = (winston.LoggerOptions = {
     winston.format.colorize(),
     winston.format.splat(),
     winston.format.printf(
-      ({ timestamp, level, label, message, stack, ...rest }) => {
+      function ({ timestamp, level, label, message, stack }) {
         const namespace = label ? `(${label})` : "";
         const errStack = stack ? `\n${stack}` : "";
 
@@ -19,7 +19,6 @@ const options = (winston.LoggerOptions = {
     new winston.transports.Console({
       level: process.env.NODE_ENV === "production" ? "error" : "debug",
     }),
-    new winston.transports.File({ filename: "logs/logs.log", level: "logs" }),
     new winston.transports.File({ filename: "logs/info.log", level: "info" }),
     new winston.transports.File({ filename: "logs/error.log", level: "error" }),
     new winston.transports.File({ filename: "logs/debug.log", level: "debug" }),
