@@ -9,10 +9,19 @@ let tbl_user = new schema({
     unique: true,
     required: true,
   },
+  phone: {
+    type: schema.Types.String,
+    default: "",
+    unique: true,
+  },
+  username: {
+    type: schema.Types.String,
+    default: "",
+    unique: true,
+  },
   first_name: { type: schema.Types.String, default: "" },
   last_name: { type: schema.Types.String, default: "" },
   password: { type: schema.Types.String, default: "" },
-  box_id: [{ type: schema.Types.ObjectId }],
   user_type: {
     type: schema.Types.String,
     default: "user",

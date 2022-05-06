@@ -1,5 +1,5 @@
-const indexController = require('./index.controller');
+const controller = require('./index.controller');
 
 module.exports = function(app, version) {
-  app.get(version + '/', indexController.index);
+  app.get(version + '/', controller.index);
 }

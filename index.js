@@ -21,9 +21,6 @@ winston.info(`Loading Config File: ./config/env/${global.config.NODE_ENV}`);
 const config = require(`./config/env/${global.config.NODE_ENV}`);
 global.config = { ...global.config, ...config };
 winston.info(`Configuration Loaded.`);
-/* ---------------------------- Global Constants ---------------------------- */
-global.constants = require("./config/constants");
-winston.info(`Loaded Constants`);
 /* ----------------------------- Connect MongoDB ---------------------------- */
 winston.info(`Connecting MongoDB`);
 require("./config/mongo")(async function (err) {
@@ -39,6 +36,22 @@ require("./config/mongo")(async function (err) {
   const logger = require("morgan");
   logger.token("clientIP", function (req, res) {
     return req.headers["x-forwarded-for"] || "" || req.socket.remoteAddress;
+  });
+  logger.token("remote-user", function (req, res) {
+    if (req.user) {
+      if (req.user._id) {
+        return (
+          "{id: " +
+          req.user._id +
+          "&name:" +
+          req.user.first_name +
+          " " +
+          req.user.last_name
+        );
+      }
+    } else {
+      return "Guest";
+    }
   });
   /* ---------------------------- Setting up Server --------------------------- */
   const express = require("express");
@@ -58,10 +71,11 @@ require("./config/mongo")(async function (err) {
   global.server.on("error", listeners.onError);
   global.server.on("listening", listeners.onListening);
   /* ---------------------------------- CORS ---------------------------------- */
+  const { baseURL, baseURLFrontEnd } = require("./config/constants");
   const cors = require("cors");
   app.use(
     cors({
-      origin: [global.constants.baseURL, global.constants.baseURLFrontEnd],
+      origin: [baseURL, baseURLFrontEnd],
       credentials: true,
     })
   );
@@ -85,7 +99,7 @@ require("./config/mongo")(async function (err) {
     })
   );
   /* -------------------------------- Sessions -------------------------------- */
-  const session = require('express-session');
+  const session = require("express-session");
   const mongoStore = require("connect-mongo");
   app.use(
     session({
@@ -102,7 +116,7 @@ require("./config/mongo")(async function (err) {
       checkExpirationInterval: 900000,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24, // time period in milliseconds,
-        sameSite: 'strict'
+        sameSite: "strict",
       },
     })
   );
@@ -152,5 +166,5 @@ require("./config/mongo")(async function (err) {
       message: err.message ? err.message : err,
       data: {},
     });
-  })
+  });
 });
