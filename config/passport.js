@@ -57,11 +57,7 @@ passport.deserializeUser(async function (user, done) {
   try {
     if (!!user) {
       const filters = { _id: user._id };
-      const account = await tbl_user.findOne(filters);
-      EXCLUDE_ON_DB_REQUESTS.split("-")
-        .join("")
-        .split(" ")
-        .forEach((key) => (user[key] = undefined));
+      const account = await tbl_user.findOne(filters).select(EXCLUDE_ON_DB_REQUESTS);
       if (!!account) {
         return done(null, account);
       } else {
