@@ -1,6 +1,9 @@
-
 export const Sample = () => {
-  return <div>Sample Page</div>;
+  return (
+    <div>
+      <p>Sample Page</p>
+    </div>
+  );
 };
 
 export default Sample;

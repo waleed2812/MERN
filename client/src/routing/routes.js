@@ -2,12 +2,11 @@ import React from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 // layouts
-import {
-  Sample
-} from "../views";
+import { Register, Login } from "../views";
 
 // views without layouts
 import { useSelector } from "react-redux";
+import Admin from "./Admin";
 
 export const Routing = () => {
   const user_data = useSelector((state) => state.auth.user_data);
@@ -17,13 +16,13 @@ export const Routing = () => {
       <Switch>
         {/* add Switch with layouts */}
         {/* Admin Switch */}
-        <PrivateRoute path="/dashboard" component={Sample} />
-        <PrivateRoute path="/profile" component={Sample} />
-        <PrivateRoute path="/settings" component={Sample} />
+        <PrivateRoute path="/dashboard" exact component={Admin} />
+        <PrivateRoute path="/profile" exact component={Admin} />
+        <PrivateRoute path="/settings" exact component={Admin} />
 
         {/* Auth Switch */}
-        <PublicRoute path="/login" component={Sample} />
-        <PublicRoute path="/register" component={Sample} />
+        <PublicRoute path="/login" exact component={Login} />
+        <PublicRoute path="/register" exact component={Register} />
 
         {/* add Redirect for first page */}
         <Route path="*" exact render={() => <Redirect to="/login" />} />
