@@ -37,17 +37,21 @@ async function register(req, res, next) {
     if (!!first_name) options.first_name = first_name;
     if (!!last_name) options.last_name = last_name;
     const user = await new tbl_user(options).save();
-    EXCLUDE_ON_DB_REQUESTS.split("-")
-      .join("")
-      .split(" ")
-      .forEach((key) => (user[key] = undefined));
-    return res.json({
-      success: true,
-      message: "Registration Successful.",
-      data: {
-        user,
-      },
-    });
+    req.body.username = email;
+    passport.authenticate("local", function (err, user, info) {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return next(info);
+      }
+      req.logIn(user, function (err) {
+        if (err) {
+          return next(err);
+        }
+        return next();
+      });
+    })(req, res, next);
   } catch (err) {
     next(err);
   }

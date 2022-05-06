@@ -6,7 +6,8 @@ module.exports = function (app, version) {
   app.post(
     version + "/register",
     passport.isNotAuthenticated,
-    controller.register
+    controller.register,
+    controller.loginSuccess
   );
   app.post(
     version + "/login",
