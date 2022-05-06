@@ -41,7 +41,7 @@ require("./config/mongo")(async function (err) {
     if (req.user) {
       if (req.user._id) {
         return (
-          "{id: " +
+          "id: " +
           req.user._id +
           "&name:" +
           req.user.first_name +
@@ -156,6 +156,13 @@ require("./config/mongo")(async function (err) {
       });
     }
   });
+  // React App
+  if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "client/build")));
+    app.get("*", function (req, res) {
+      res.sendFile(path.join(__dirname, "client/build", "index.html"));
+    });
+  }
   /* ----------------- Catch 404 and forward to error handler ----------------- */
   app.all("*", function (req, res, next) {
     err = new Error("404 Not Found");
