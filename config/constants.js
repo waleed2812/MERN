@@ -1,13 +1,13 @@
 exports.EXCLUDE_ON_DB_REQUESTS = "-password -updatedAt -createdAt -__v";
 
 exports.baseURL =
-  process.env.NODE_ENV === "development"
+  global.config.NODE_ENV === "development"
     ? "http://localhost:" + global.config.PORT
     : "https://my-mern-test.herokuapp.com";
 
 exports.baseURLFrontEnd =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
+  global.config.NODE_ENV === "development"
+    ? "http://localhost:3002"
     : "https://my-mern-test.herokuapp.com";
 
 exports.SALT_WORK_FACTOR = 10;

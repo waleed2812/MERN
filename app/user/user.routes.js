@@ -5,13 +5,11 @@ module.exports = function (app, version) {
   version += "/user";
   app.post(
     version + "/register",
-    passport.isNotAuthenticated,
     controller.register,
     controller.loginSuccess
   );
   app.post(
     version + "/login",
-    passport.isNotAuthenticated,
     controller.login,
     controller.loginSuccess
   );

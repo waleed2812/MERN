@@ -77,12 +77,6 @@ passport.isAuthenticated = function (req, res, next) {
   }
   return next({ message: "User is not logged in" });
 };
-passport.isNotAuthenticated = function (req, res, next) {
-  if (!req.isAuthenticated()) {
-    return next();
-  }
-  return next({ message: "User is already logged in." });
-};
 // Logout
 passport.logout = function (req, res, next) {
   req.logout();

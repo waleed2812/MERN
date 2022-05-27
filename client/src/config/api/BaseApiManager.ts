@@ -12,13 +12,12 @@ export class BaseApiManager {
     const finalURL = url;
     console.log("finalURL", finalURL);
     try {
-      return await fetch(finalURL, requestOptions)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          return responseJson;
-        });
+      const response = await fetch(finalURL, requestOptions);
+      const responseJSON = await response.json();
+      console.log("responseJSON", responseJSON);
+      return responseJSON;
     } catch (error) {
-      console.error("BaseAPI Manager Post Method Exception: ", error);
+      console.error("BaseAPI Manager Exception: ", error);
       return error;
     }
   }
@@ -38,13 +37,12 @@ export class BaseApiManager {
     console.log("finalURL", finalURL);
     console.log("Data to be Posted in Server: ", parameters);
     try {
-      return await fetch(finalURL, requestOptions)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          return responseJson;
-        });
+      const response = await fetch(finalURL, requestOptions);
+      const responseJSON = await response.json();
+      console.log("responseJSON", responseJSON);
+      return responseJSON;
     } catch (error) {
-      console.error("BaseAPI Manager Post Method Exception: ", error);
+      console.error("BaseAPI Manager Exception: ", error);
       return error;
     }
   }
@@ -63,13 +61,12 @@ export class BaseApiManager {
     console.log("finalURL", finalURL);
     console.log("Data to be Posted in Server: ", parameters);
     try {
-      return await fetch(finalURL, requestOptions)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          return responseJson;
-        });
+      const response = await fetch(finalURL, requestOptions);
+      const responseJSON = await response.json();
+      console.log("responseJSON", responseJSON);
+      return responseJSON;
     } catch (error) {
-      console.error("BaseAPI Manager Post Method Exception: ", error);
+      console.error("BaseAPI Manager Exception: ", error);
       return error;
     }
   }
@@ -88,13 +85,12 @@ export class BaseApiManager {
     console.log("finalURL", finalURL);
     console.log("Data to be Posted in Server: ", parameters);
     try {
-      return await fetch(finalURL, requestOptions)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          return responseJson;
-        });
+      const response = await fetch(finalURL, requestOptions);
+      const responseJSON = await response.json();
+      console.log("responseJSON", responseJSON);
+      return responseJSON;
     } catch (error) {
-      console.error("BaseAPI Manager Post Method Exception: ", error);
+      console.error("BaseAPI Manager Exception: ", error);
       return error;
     }
   }
@@ -114,13 +110,12 @@ export class BaseApiManager {
     console.log("finalURL", finalURL);
     console.log("Data to be Posted in Server: ", parameters);
     try {
-      return await fetch(finalURL, requestOptions)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          return responseJson;
-        });
+      const response = await fetch(finalURL, requestOptions);
+      const responseJSON = await response.json();
+      console.log("responseJSON", responseJSON);
+      return responseJSON;
     } catch (error) {
-      console.error("BaseAPI Manager Post Method Exception: ", error);
+      console.error("BaseAPI Manager Exception: ", error);
       return error;
     }
   }
@@ -128,19 +123,21 @@ export class BaseApiManager {
   async get(url: string) {
     const requestOptions: RequestInit = {
       method: "get",
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
       credentials: "include",
     };
     const finalURL = url;
     console.log("finalURL", finalURL);
     try {
-      return await fetch(finalURL, requestOptions)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          return responseJson;
-        });
+      const response = await fetch(finalURL, requestOptions);
+      const responseJSON = await response.json();
+      console.log("responseJSON", responseJSON);
+      return responseJSON;
     } catch (error) {
-      console.error("BaseAPI Manager Get Method Exception: ", error);
+      console.error("BaseAPI Manager Exception: ", error);
       return error;
     }
   }
