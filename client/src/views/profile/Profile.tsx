@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Dashboard: React.FC<{}> = () => {
+export const Profile: React.FC<{}> = () => {
 
   return (
     <div
@@ -12,9 +12,9 @@ export const Dashboard: React.FC<{}> = () => {
         flexDirection: "column",
       }}
     >
-      Dashboard
+      Profile
     </div>
   );
 };
 
-export default Dashboard;
+export default Profile;

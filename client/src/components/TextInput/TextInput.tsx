@@ -82,7 +82,7 @@ export const TextInput = React.forwardRef<any, IMyTextInput>(
         const pass = validatePassword(event.target.value);
         setState((prevState: any) => ({
           ...prevState,
-          [value]: event.target.value,
+          [value]: pass,
           [`is_valid_${value}`]: true,
         }));
       } catch (err) {
