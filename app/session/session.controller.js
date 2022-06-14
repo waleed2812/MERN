@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 module.exports = async function(req, res, next) {
   try {
     console.log("session middleware");
-    console.log(req.headers);
     var id = req.headers.session_id;
     try {
       id = mongoose.Types.ObjectId(id);
@@ -18,8 +17,7 @@ module.exports = async function(req, res, next) {
     }
 
     console.log(id);
-    next()
-
+    next();
   } catch(err) {
     next(err);
   }
