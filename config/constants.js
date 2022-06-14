@@ -7,7 +7,7 @@ exports.baseURL =
 
 exports.baseURLFrontEnd =
   global.config.NODE_ENV === "development"
-    ? "http://localhost:3002"
+    ? "http://localhost:3000"
     : "https://my-mern-test.herokuapp.com";
 
 exports.SALT_WORK_FACTOR = 10;

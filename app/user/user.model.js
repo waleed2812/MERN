@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const mongoose_timestamps = require("mongoose-timestamp");
 const bcrypt = require("bcryptjs");
+const { SALT_WORK_FACTOR } = require("../../config/constants");
 const schema = mongoose.Schema;
 let tbl_user = new schema({
   email: {
@@ -32,7 +33,7 @@ tbl_user.pre("save", async function (next) {
     // only hash the password if it has been modified or is new
     if (!user.isModified("password")) return next();
     // generate a salt
-    let salt = await bcrypt.genSalt(global.config.SALT_WORK_FACTOR);
+    let salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
     let hash = await bcrypt.hash(this.password, salt);
     // override clear text password with hashed one
     user.password = hash;

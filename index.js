@@ -120,10 +120,8 @@ require("./config/mongo")(async function (err) {
   //     },
   //   })
   // );
-  app.use(
-    require("./app/session/session.controller")
-  )
-
+  const sessionController = require("./app/session/session.controller");
+  app.use(sessionController.middleware);
   /* ------------------------------- Passport --------------------------------- */
   // const passport = require("./config/passport");
   // app.use(passport.initialize());

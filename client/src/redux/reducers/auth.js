@@ -8,13 +8,16 @@ export const counterSlice = createSlice({
   },
   reducers: {
     logout: (state) => {
-      localStorage.removeItem("user_data");
       new APIManager().logout();
+      localStorage.removeItem("user_data");
+      localStorage.removeItem("session");
       state.user_data = null;
     },
     login: (state, action) => {
       if (!!action.payload) {
-        localStorage.setItem("user_data", JSON.stringify(action.payload));
+        console.log('action.payload', action.payload)
+        localStorage.setItem("user_data", JSON.stringify(action?.payload?.user));
+        localStorage.setItem("session", JSON.stringify(action?.payload?.session));
         state.user_data = action.payload;
       }
     },

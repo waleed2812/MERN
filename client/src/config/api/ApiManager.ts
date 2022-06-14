@@ -2,39 +2,24 @@ import BaseApiManager from "./BaseApiManager";
 import { apiURL } from "./config";
 
 export class APIManager {
-
   /* ---------------------------------- Auth ---------------------------------- */
   async register(params: string) {
-    try {
-      const obj = new BaseApiManager();
-      const response = await obj.post(apiURL + '/user/register', params);
-      return response;
-    } catch (err: any) {
-      return !!err?.response?.data ? err?.response?.data : err;
-    }
+    const obj = new BaseApiManager();
+    const response = await obj.post(apiURL + "/register", params);
+    return response;
   }
 
   async login(params: string) {
-    try {
-      const obj = new BaseApiManager();
-      const response = await obj.post(apiURL + '/user/login', params);
-      return response;
-    } catch (err: any) {
-      return !!err?.response?.data ? err?.response?.data : err;
-    }
+    const obj = new BaseApiManager();
+    const response = await obj.post(apiURL + "/login", params);
+    return response;
   }
 
   async logout() {
-    try {
-      const obj = new BaseApiManager();
-      const response = await obj.delete(apiURL + '/user/logout');
-      return response;
-    } catch (err: any) {
-      return !!err?.response?.data ? err?.response?.data : err;
-    }
+    const obj = new BaseApiManager();
+    const response = await obj.delete(apiURL + "/logout");
+    return response;
   }
-
-
 }
 
 export default APIManager;

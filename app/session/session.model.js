@@ -1,19 +1,28 @@
 const mongoose = require("mongoose");
 const mongoose_timestamps = require("mongoose-timestamp");
 const schema = mongoose.Schema;
-let tbl_session = new schema({
-  user_id: {
+let tbl_sessions = new schema({
+  auth_token: {
     type: schema.Types.String,
     unique: true,
     required: true,
   },
-  user_ip: {
+  user_id: {
     type: schema.Types.String,
-    default: "",
-    unique: true,
+    required: true,
   },
   expires: { type: schema.Types.Date, default: new Date() },
-  fcm_token: { type: schema.Types.String, default: "" },
+  user_ip: {
+    type: schema.Types.String,
+    default: undefined,
+  },
+  fcm_token: { type: schema.Types.String, default: undefined },
+  device_type: { type: schema.Types.String, default: undefined },
+  device_os: { type: schema.Types.String, default: undefined },
+  device_os_version: { type: schema.Types.String, default: undefined },
+  device_name: { type: schema.Types.String, default: undefined },
+  device_model: { type: schema.Types.String, default: undefined },
+  application: { type: schema.Types.String, default: undefined },
 });
-tbl_session.plugin(mongoose_timestamps);
-module.exports = mongoose.model("tbl_session", tbl_session, "tbl_session");
+tbl_sessions.plugin(mongoose_timestamps);
+module.exports = mongoose.model("tbl_sessions", tbl_sessions, "tbl_sessions");
