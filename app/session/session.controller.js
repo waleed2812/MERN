@@ -88,7 +88,6 @@ async function logout(req, res, next) {
           _id: req.session._id,
         },
         {
-          $unset: { auth_token: 1 },
           expires: new Date(0).toISOString(),
         }
       );
