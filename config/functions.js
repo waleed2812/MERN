@@ -13,7 +13,7 @@ exports.validatePassword = function (password) {
     throw new Error("Password must include a lowercase letter.");
   }
   if (password.search(/[A-Z]/) === -1) {
-    throw new Error("Password must include a uppercase letter.");
+    throw new Error("Password must include an uppercase letter.");
   }
   if (password.search(/[^0-9a-zA-Z]/) === -1) {
     throw new Error("Password must include a special character.");
