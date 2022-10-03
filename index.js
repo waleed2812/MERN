@@ -57,6 +57,14 @@ require("./config/mongo")(async function (err) {
   const express = require("express");
   const http = require("http");
   const app = express();
+  if (global.config.NODE_ENV === "production") {
+    app.use((req, res, next) => {
+      if (req.headers["x-forwarded-proto"] === "https") {
+        return next();
+      }
+      return res.redirect("https://" + req.headers.host + req.url);
+    });
+  }
   app.use(
     logger(
       ":date[iso] :clientIP user=:remote-user :method :url HTTP/:http-version status=:status - response-time=:response-time ms"
