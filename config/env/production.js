@@ -1,19 +1,23 @@
-const PORT = process.env.PORT || 3001;
-const DB_NAME = "mern";
-const DB_USER = process.env.DB_USER || "dbUser";
-const DB_PASSWORD = process.env.DB_PASSWORD || "dbUserPassword";
-const HOST = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.yqhzm.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
+const PORT = process.env.PORT || 3000;
+const MONGODB_NAME = process.env.MONGODB_NAME || "mern";
+const MONGODB_USER = process.env.MONGODB_USER || "dbUser";
+const MONGODB_PASSWORD = process.env.MONGODB_PASSWORD || "dbUserPassword";
+const MONGODB_HOST = process.env.MONGODB_HOST || "localhost";
+const MONGODB_PORT = process.env.MONGODB_PORT || 27017;
+const CONNECTION_STRING = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_NAME}?retryWrites=true&w=majority`;
 
 module.exports = {
-  PORT: PORT,
+  PORT,
   mongodb: {
-    host: HOST,
+    host: MONGODB_HOST,
+    port: MONGODB_PORT,
+    database: MONGODB_NAME,
+    connString: CONNECTION_STRING,
     credentials: {
-      username: DB_USER,
-      password: DB_PASSWORD,
+      username: MONGODB_USER,
+      password: MONGODB_PASSWORD,
     },
   },
-  enableMongoDebugging: true,
   session: {
     secret: "mern-secret",
   },

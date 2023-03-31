@@ -1,14 +1,15 @@
 const controller = require("./account.controller");
-const sessionController = require("../session/session.controller");
-// const passport = require("../../config/passport");
+const passport = require("../../config/passport");
 
 module.exports = function (app, version) {
-  app.post(version + "/register", controller.register);
-  app.post(version + "/login", controller.login);
-  app.get(
-    version + "/profile",
-    sessionController.isAuthenticated,
-    controller.getProfile
-  );
-  app.delete(version + "/logout", sessionController.logout);
+  const endpoint = version + "/account";
+  app.post(endpoint + "/register", controller.register);
+  app.post(endpoint + "/forget", controller.forget);
+  app.post(endpoint + "/otp", controller.otp);
+  app.post(endpoint, controller.login, controller.loginSuccess);
+  app.put(endpoint + "/forget", controller.updatePassword);
+  app.put(endpoint, passport.isAuthenticated, controller.putProfile);
+  app.get(endpoint, passport.isAuthenticated, controller.getProfile);
+  app.delete(endpoint + "/delete", passport.isAuthenticated, controller.delete);
+  app.delete(endpoint, passport.isAuthenticated, passport.logout);
 };

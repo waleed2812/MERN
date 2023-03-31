@@ -1,193 +1,251 @@
-const { validateEmail, validatePassword } = require("../../config/functions");
+const mongoose = require("mongoose");
+const Users = mongoose.model("Users");
+const passport = require("../../config/passport");
+const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 const {
   EXCLUDE_ON_DB_REQUESTS,
   SALT_WORK_FACTOR,
+  SENDGRID_OPTIONS,
 } = require("../../config/constants");
-const mongoose = require("mongoose");
-const tbl_user = mongoose.model("tbl_user");
-const tbl_sessions = mongoose.model("tbl_sessions");
-// const passport = require("../../config/passport");
-const bcrypt = require("bcryptjs");
+const {
+  validatePassword,
+  validateName,
+  validateEmail,
+  getRandomInt,
+} = require("../../utils");
+const winston = require("../../config/winston");
 
-async function createSession(req, user) {
-  const salt = bcrypt.genSaltSync(SALT_WORK_FACTOR);
-  const hash = bcrypt.hashSync(
-    user?._id + user?.email + global.config.session.secret,
-    salt
-  );
-  let session_options = {
-    auth_token: hash,
-    user_id: user._id,
-    expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-    user_ip: req.socket.remoteAddress,
-  };
-  const {
-    fcm_token,
-    device_type,
-    device_os,
-    device_os_version,
-    device_name,
-    device_model,
-    application,
-  } = req.body;
-  if (fcm_token) session_options.fcm_token = fcm_token;
-  if (device_type) session_options.device_type = device_type;
-  if (device_os) session_options.device_os = device_os;
-  if (device_os_version) session_options.device_os_version = device_os_version;
-  if (device_name) session_options.device_name = device_name;
-  if (device_model) session_options.device_model = device_model;
-  if (application) session_options.application = application;
-  return await new tbl_sessions(session_options).save();
-}
-
-async function register(req, res, next) {
+exports.register = async function (req, res, next) {
   try {
-    let { username, email, first_name, last_name, password } = req.body;
-    if (!email) {
-      throw new Error("No Email Provided");
-    }
-    if (!validateEmail(email)) {
-      throw new Error(`${email} is invalid email`);
-    }
-    if (!password) {
-      throw new Error("No Password Provided");
-    }
-    password = validatePassword(password);
+    const { email, password, name } = req.body;
     let options = {
-      email,
-      password,
+      email: validateEmail(email),
+      password: validatePassword(password),
+      name: validateName(name),
     };
-    if (!!username) options.username = username;
-    if (!!first_name) options.first_name = first_name;
-    if (!!last_name) options.last_name = last_name;
-    const user = await new tbl_user(options).save();
-    if (!user) throw new Error("failed to register.");
-    const session = await createSession(req, user);
-    if (!session) throw new Error("failed to create a session. try login.");
+    const user = await new Users(options).save();
+    if (!user) next({ msgCode: "CREATE" });
     return res.json({
       success: true,
-      message: "successfully created account.",
+      message: "registration successful.",
+      data: {},
+    });
+  } catch (err) {
+    if (err?.message?.includes("duplicate")) {
+      return next({ msgCode: "DUPLICATE_EMAIL" });
+    }
+    return next(err);
+  }
+};
+exports.login = async function (req, res, next) {
+  try {
+    passport.authenticate("local", function (err, user, info) {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return next(info);
+      }
+      req.logIn(user, function (err) {
+        if (err) {
+          return next(err);
+        }
+        return next();
+      });
+    })(req, res, next);
+  } catch (err) {
+    return next(err);
+  }
+};
+exports.loginSuccess = async function (req, res, next) {
+  try {
+    if (!req.user) return next({ msgCode: "UNAUTHENTICATED" });
+    return res.json({
+      success: true,
+      message: "login successful.",
       data: {
-        user: {
-          _id: user._id,
-          email: user?.email,
-        },
-        session: {
-          auth_token: session.auth_token,
-        },
+        user: req.user,
       },
     });
-    // req.body.username = email;
-    // passport.authenticate("local", function (err, user, info) {
-    //   if (err) {
-    //     return next(err);
-    //   }
-    //   if (!user) {
-    //     return next(info);
-    //   }
-    //   req.logIn(user, function (err) {
-    //     if (err) {
-    //       return next(err);
-    //     }
-    //     return next();
-    //   });
-    // })(req, res, next);
   } catch (err) {
-    next(err);
+    return next(err);
   }
-}
-
-async function login(req, res, next) {
+};
+exports.getProfile = async function (req, res, next) {
   try {
-    const { username, password } = req.body;
-    if(!username) throw new Error("no username provided.")
-    if(!password) throw new Error("no password provided.")
-
-    const search = username?.split(" ")?.join("")?.toLowerCase();
-    const filter = {
-      $or: [{ email: search }, { phone: search }, { username: search }],
-    };
-    const user = await tbl_user.findOne(filter);
-    if (user) {
-      if (bcrypt.compareSync(password, user.password)) {
-        const session = await createSession(req, user);
-        if (!session) throw new Error("failed to create a session. try again.");
-        return res.json({
-          success: true,
-          message: "login successfully.",
-          data: {
-            user: {
-              _id: user._id,
-              email: user?.email,
-            },
-            session: {
-              auth_token: session.auth_token,
-            },
-          },
-        });
-      } else {
-        throw new Error("Invalid Password");
-      }
-    } else {
-      throw new Error("User Not Found");
-    }
-    // passport.authenticate("local", function (err, user, info) {
-    //   if (err) {
-    //     return next(err);
-    //   }
-    //   if (!user) {
-    //     return next(info);
-    //   }
-    //   req.logIn(user, function (err) {
-    //     if (err) {
-    //       return next(err);
-    //     }
-    //     return next();
-    //   });
-    // })(req, res, next);
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function loginSuccess(req, res, next) {
-  try {
-    if (req.user) {
-      return res.json({
-        success: true,
-        message: "Login Successful.",
-        data: {
-          user: req.user,
-        },
-      });
-    } else {
-      throw new Error("Failed to Login. Unknown Error");
-    }
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function getProfile(req, res, next) {
-  try {
-    const user = await tbl_user
-      .findOne({ _id: req.user._id })
-      .select(EXCLUDE_ON_DB_REQUESTS);
+    const user = await Users.findOne({ _id: req.user._id }).select(
+      EXCLUDE_ON_DB_REQUESTS
+    );
     return res.json({
       success: true,
-      message: "User Profile Fetched Successfully.",
+      message: "user profile fetched successfully.",
       data: {
         user,
       },
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
-}
+};
+exports.putProfile = async function (req, res, next) {
+  try {
+    const filters = { _id: req.user._id };
+    const user = await Users.findOne(filters);
+    if (!user) return next({ msgCode: "USER_NOTFOUND" });
+    // console.log(req.body);
+    const { email, name, password, newPassword } = req.body;
+    let options = {};
+    if (email && email !== user.email) {
+      options.email = validateEmail(email);
+    }
+    if (name && name !== user.name) {
+      options.name = validateName(name);
+    }
+    if (password && newPassword) {
+      if (!bcrypt.compareSync(password, user.password)) {
+        return next({ msgCode: "INVALID_PASSWORD" });
+      }
+      if (!validatePassword(newPassword))
+        return next({
+          msgCode: "INVALID_NEW_PASSWORD",
+          data: {
+            errors: {
+              newPassword: PASSWORD_RULES,
+            },
+          },
+        });
+      options.password = bcrypt.hashSync(
+        newPassword,
+        bcrypt.genSaltSync(SALT_WORK_FACTOR)
+      );
+    }
 
-module.exports = {
-  register,
-  login,
-  loginSuccess,
-  getProfile,
+    if (Object.keys(options).length <= 0) {
+      return next({ msgCode: "UPDATE_NOTHING" });
+    }
+    options.updatedAt = new Date();
+    const update = await Users.findOneAndUpdate(filters, options, {
+      new: true,
+    }).select(EXCLUDE_ON_DB_REQUESTS);
+    if (!update) return next({ msgCode: "UPDATE" });
+    return res.json({
+      success: true,
+      message: "user profile updated successfully.",
+      data: {
+        user: update,
+      },
+    });
+  } catch (err) {
+    if (err?.message?.includes("duplicate")) {
+      return next({ msgCode: "DUPLICATE_EMAIL" });
+    }
+    return next(err);
+  }
+};
+exports.delete = async function (req, res, next) {
+  try {
+    const { _id } = req.user;
+    req.logout(function (err) {
+      req.session.destroy(async function (err) {
+        Users.deleteOne({ _id })
+          .then(() => {
+            return res.json({
+              success: true,
+              message: "Account deleted.",
+              data: {},
+            });
+          })
+          .catch(() => {
+            return next({ msgCode: "DELETE" });
+          });
+      });
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+exports.forget = async function (req, res, next) {
+  try {
+    const { email } = req.body;
+    const filters = {
+      email,
+    };
+    const user = await Users.findOne(filters).select(EXCLUDE_ON_DB_REQUESTS);
+    if (!user) return next({ msgCode: "USER_NOTFOUND" });
+    const otp = getRandomInt(10000, 1000);
+    // console.log("otp", otp);
+    const options = {
+      otp,
+      expiry: Date.now() + 1000 * 60 * 60, // 1 hour in milliseconds
+    };
+    // Sending OTP
+    const client = nodemailer.createTransport(SENDGRID_OPTIONS);
+    const mailOptions = {
+      to: email,
+      from: process.env.SENDGRID_FROM,
+      subject: "MERN Password Reset.",
+      text: "Enter the following OTP to reset your password:\n\nOTP: " + otp,
+    };
+    client.sendMail(mailOptions).catch((err) => winston.error(err));
+    const update = await Users.findOneAndUpdate(filters, options, {
+      new: true,
+    }).select(EXCLUDE_ON_DB_REQUESTS);
+    if (!update) {
+      return next({ msgCode: "OTP_UPDATE" });
+    }
+    return res.json({
+      success: true,
+      message: "OTP sent on email.",
+      data: {
+        expiry: new Date(options.expiry),
+      },
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+exports.otp = async function (req, res, next) {
+  try {
+    const { email } = req.body;
+    const otp = Number.parseInt(req.body.otp);
+    const filters = {
+      email,
+    };
+    const user = await Users.findOne(filters);
+    if (!user) return next({ msgCode: "USER_NOTFOUND" });
+    if (user.expiry < Date.now()) return next({ msgCode: "OTP_EXPIRED" });
+    if (user.otp !== otp) return next({ msgCode: "OTP_INVALID" });
+    return res.json({
+      success: true,
+      message: "otp is valid.",
+      data: {},
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+exports.updatePassword = async function (req, res, next) {
+  try {
+    const { email } = req.body;
+    const filters = {
+      email,
+      expiry: { $gte: Date.now() },
+    };
+    const user = await Users.findOne(filters);
+    if (!user) return next({ msgCode: "OTP_EXPIRED" });
+    const otp = Number.parseInt(req.body.otp);
+    if (user.otp !== otp) return next({ msgCode: "OTP_INVALID" });
+    user.password = validatePassword(req.body.password);
+    user.otp = undefined;
+    user.expiry = undefined;
+    await user.save();
+    return res.json({
+      success: true,
+      message: "password has been updated. login with new password",
+      data: {},
+    });
+  } catch (err) {
+    return next(err);
+  }
 };

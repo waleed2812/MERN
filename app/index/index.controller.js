@@ -1,16 +1,15 @@
 async function index(req, res, next) {
   try {
-    // console.log(req.user);
     return res.json({
       success: true,
-      message: "MERN Server is Running",
+      message: "MERN server is running",
       data: {},
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 }
 
 module.exports = {
   index
-}
+};

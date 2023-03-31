@@ -1,1 +1,0 @@
-## Client Side React App for MERN
