@@ -1,0 +1,61 @@
+{
+  "name": "MERN",
+  "short_name": "MERN",
+  "description": "This is the code where I try new things in while developing applications using MERN Stack.",
+  "start_url": "/",
+  "display": "minimal-ui",
+  "orientation": "portrait",
+  "background_color": "#020D1B",
+  "background_colors": [
+    {
+      "color": "#020D1B",
+      "media": "(prefers-color-scheme: dark)"
+    },
+    {
+      "color": "#DDDDDD",
+      "media": "(prefers-color-scheme: light)"
+    }
+  ],
+  "theme_color": "#3688E5",
+  "icons": [
+    {
+      "src": "assets/images/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "media": "(prefers-color-scheme: light)"
+    },
+    {
+      "src": "assets/images/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "media": "(prefers-color-scheme: dark)"
+    },
+    {
+      "src": "assets/images/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "media": "(prefers-color-scheme: light)"
+    },
+    {
+      "src": "assets/images/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "media": "(prefers-color-scheme: dark)"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Login",
+      "url": "/login",
+      "icons": [
+        {
+          "src": "assets/images/logo512.png",
+          "sizes": "512x512",
+          "type": "image/jpg",
+          "purpose": "any monochrome"
+        }
+      ]
+    }
+  ],
+  "splash_pages": null
+}
